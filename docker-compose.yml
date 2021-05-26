@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+    core:
+        build: .
+        command: >
+            sh -c "
+            python manage.py migrate &&
+            python manage.py runserver 0.0.0.0:8000"
+        depends_on:
+            core-db
+
+        volumes:
+            - ./main:/main
+        ports:
+            - 8000:8000
+        env_file:
+            - .env.dev
+        depends_on:
+            - core-db
+    core-db:
+        image: postgres
+        volumes:
+            - postgres_data;/var/lib/postgresql/data
+        environment: 
+            - POSTGRES_USER=olist
+            - POSTGRES_PASSWORD=olist123
+            - POSTGRES_DB=core_dev
+           
+volumes:
+    postgres_data:
